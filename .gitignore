@@ -23,3 +23,6 @@ dist/
 # DB
 *.sqlite3
 *.db
+
+# Claude Code worktrees (ephemeral agent sandboxes)
+.claude/worktrees/
