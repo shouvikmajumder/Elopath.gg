@@ -55,10 +55,3 @@ class RiotAPIClient:
         url = f"{platform_host_for(platform)}/lol/league/v4/entries/by-puuid/{puuid}"
         return await self._get(url)
 
-    async def get_challenger_entries(self, queue: str = "RANKED_SOLO_5x5") -> dict:
-        url = f"{settings.platform_host}/lol/league/v4/challengerleagues/by-queue/{queue}"
-        return await self._get(url)
-
-    async def get_grandmaster_entries(self, queue: str = "RANKED_SOLO_5x5") -> dict:
-        url = f"{settings.platform_host}/lol/league/v4/grandmasterleagues/by-queue/{queue}"
-        return await self._get(url)

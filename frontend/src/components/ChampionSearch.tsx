@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import { Search } from 'lucide-react'
 import { useChampions, useChampionSearch } from '../hooks/useChampions'
-import type { Champion, Role } from '../types'
+import type { Champion } from '../types'
 
 interface ChampionSearchProps {
   placeholder?: string
   onSelect: (champion: Champion) => void
-  selectedRole?: Role
   size?: 'sm' | 'default'
 }
 
