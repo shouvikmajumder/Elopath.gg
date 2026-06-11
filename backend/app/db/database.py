@@ -37,6 +37,14 @@ CREATE TABLE IF NOT EXISTS build_recommendations (
 
 CREATE INDEX IF NOT EXISTS idx_builds_lookup
     ON build_recommendations(champion, role, lane_opponent);
+
+CREATE TABLE IF NOT EXISTS build_analyses (
+    match_id TEXT NOT NULL,
+    puuid TEXT NOT NULL,
+    analysis_json TEXT NOT NULL,
+    created_at INTEGER,
+    PRIMARY KEY (match_id, puuid)
+);
 """
 
 
@@ -119,6 +127,28 @@ async def save_match_cache(match_id: str, region: str, data: dict) -> None:
             """INSERT OR REPLACE INTO match_cache (match_id, region, data, cached_at)
                VALUES (?,?,?,?)""",
             (match_id, region, json.dumps(data), int(time.time())),
+        )
+        await db.commit()
+
+
+async def get_cached_analysis(match_id: str, puuid: str) -> dict | None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute(
+            "SELECT analysis_json FROM build_analyses WHERE match_id=? AND puuid=?",
+            (match_id, puuid),
+        )
+        row = await cursor.fetchone()
+        if not row:
+            return None
+        return json.loads(row[0])
+
+
+async def save_analysis(match_id: str, puuid: str, data: dict) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """INSERT OR REPLACE INTO build_analyses (match_id, puuid, analysis_json, created_at)
+               VALUES (?,?,?,?)""",
+            (match_id, puuid, json.dumps(data), int(time.time())),
         )
         await db.commit()
 

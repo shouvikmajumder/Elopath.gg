@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from app.services.build_engine import recommend_build
 from app.services import data_dragon as dd
+from app.services.build_analyst import analyze_match_build
+from app.db.database import get_cached_analysis, save_analysis
 
 router = APIRouter()
 
@@ -66,6 +68,23 @@ async def get_build_recommendation(req: BuildRequest):
     except Exception:
         # Return without enrichment if Data Dragon is unavailable
         return build
+
+
+@router.get("/analyze/{platform}/{match_id}")
+async def get_match_build_analysis(platform: str, match_id: str, puuid: str):
+    cached = await get_cached_analysis(match_id, puuid)
+    if cached:
+        return cached
+
+    try:
+        result = await analyze_match_build(platform, match_id, puuid)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+    await save_analysis(match_id, puuid, result)
+    return result
 
 
 @router.get("/seeded-champions")
