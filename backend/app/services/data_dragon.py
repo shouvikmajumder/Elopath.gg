@@ -47,6 +47,10 @@ def champion_icon_url(champion_id: str, version: str) -> str:
     return f"{BASE}/cdn/{version}/img/champion/{champion_id}.png"
 
 
+def profile_icon_url(profile_icon_id: int, version: str) -> str:
+    return f"{BASE}/cdn/{version}/img/profileicon/{profile_icon_id}.png"
+
+
 def champion_splash_url(champion_id: str, skin: int = 0) -> str:
     return f"{BASE}/cdn/img/champion/splash/{champion_id}_{skin}.jpg"
 
