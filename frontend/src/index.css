@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0A0E1A;
+    color: #F0E6D3;
+    font-family: 'Rajdhani', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #111827;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #C89B3C40;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #C89B3C80;
+  }
+}
+
+@layer utilities {
+  .text-shadow-gold {
+    text-shadow: 0 0 20px #C89B3C60;
+  }
+
+  .border-default {
+    border-color: #2A3147;
+  }
+
+  .bg-hex {
+    background-image: radial-gradient(circle, #C89B3C06 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .clip-hex {
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  }
+
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #C89B3C50, transparent);
+  }
+}
+
+/* Staggered animation opacities for items that haven't loaded yet */
+.animate-fade-in {
+  opacity: 0;
+  animation: fade-in 0.4s ease forwards;
+}
+
+.animate-slide-right {
+  opacity: 0;
+  animation: slide-right 0.4s ease forwards;
+}
+
+.animate-fade-up {
+  opacity: 0;
+  animation: fade-up 0.5s ease forwards;
+}
+
+@keyframes fade-in {
+  to { opacity: 1; }
+}
+
+@keyframes slide-right {
+  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(-12px); }
+}
+
+@keyframes fade-up {
+  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(16px); }
+}
+
+@keyframes counter {
+  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: scale(0.85); }
+}
