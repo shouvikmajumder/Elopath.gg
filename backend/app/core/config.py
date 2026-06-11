@@ -38,4 +38,13 @@ class Settings(BaseSettings):
         return f"https://{self.RIOT_REGION}.api.riotgames.com"
 
 
+def platform_host_for(platform: str) -> str:
+    return f"https://{platform}.api.riotgames.com"
+
+
+def regional_host_for(platform: str) -> str:
+    region = PLATFORM_TO_REGIONAL.get(platform, "americas")
+    return f"https://{region}.api.riotgames.com"
+
+
 settings = Settings()

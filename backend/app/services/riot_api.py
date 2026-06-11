@@ -1,6 +1,6 @@
 import httpx
 from typing import Any
-from app.core.config import settings
+from app.core.config import settings, platform_host_for, regional_host_for
 
 
 class RiotAPIError(Exception):
@@ -25,29 +25,34 @@ class RiotAPIClient:
             r.raise_for_status()
             return r.json()
 
-    async def get_account_by_riot_id(self, game_name: str, tag_line: str) -> dict:
-        url = f"{settings.regional_host}/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}"
+    async def get_account_by_riot_id(self, platform: str, game_name: str, tag_line: str) -> dict:
+        url = f"{regional_host_for(platform)}/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}"
         return await self._get(url)
 
-    async def get_summoner_by_puuid(self, puuid: str) -> dict:
-        url = f"{settings.platform_host}/lol/summoner/v4/summoners/by-puuid/{puuid}"
+    async def get_summoner_by_puuid(self, platform: str, puuid: str) -> dict:
+        url = f"{platform_host_for(platform)}/lol/summoner/v4/summoners/by-puuid/{puuid}"
         return await self._get(url)
 
     async def get_match_ids(
         self,
         puuid: str,
+        platform: str,
         queue: int = 420,
         count: int = 20,
         champion: int | None = None,
     ) -> list[str]:
-        url = f"{settings.regional_host}/lol/match/v5/matches/by-puuid/{puuid}/ids"
+        url = f"{regional_host_for(platform)}/lol/match/v5/matches/by-puuid/{puuid}/ids"
         params: dict[str, Any] = {"queue": queue, "count": count}
         if champion is not None:
             params["champion"] = champion
         return await self._get(url, params)
 
-    async def get_match(self, match_id: str) -> dict:
-        url = f"{settings.regional_host}/lol/match/v5/matches/{match_id}"
+    async def get_match(self, match_id: str, platform: str) -> dict:
+        url = f"{regional_host_for(platform)}/lol/match/v5/matches/{match_id}"
+        return await self._get(url)
+
+    async def get_league_entries_by_puuid(self, platform: str, puuid: str) -> list[dict]:
+        url = f"{platform_host_for(platform)}/lol/league/v4/entries/by-puuid/{puuid}"
         return await self._get(url)
 
     async def get_challenger_entries(self, queue: str = "RANKED_SOLO_5x5") -> dict:
