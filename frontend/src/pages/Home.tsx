@@ -32,9 +32,6 @@ function Nav() {
           <a href="/" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
             Champions
           </a>
-          <a href="/" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
-            Items
-          </a>
           <Link to="/profile" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
             Profile
           </Link>
