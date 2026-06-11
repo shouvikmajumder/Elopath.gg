@@ -55,6 +55,7 @@ into subagents and asking them to return concise summaries.
 | Planning, sequencing, talking to the dev    | **orchestrator (you)** |
 | UI, components, styling, layout, UX, a11y   | `frontend-designer`    |
 | APIs, business logic, data model, services  | `backend-engineer`     |
+| Reviewing new code for bugs, security, edge cases | `code-reviewer`  |
 | Writing/running tests, reproducing & fixing bugs | `test-debugger`   |
 | Staging + committing finished subtasks      | `committer`            |
 
@@ -69,13 +70,20 @@ Invoke a subagent explicitly when you want a guaranteed handoff, e.g.
 2. **`backend-engineer`** implements the data model + endpoints/services and
    returns the final API contract. → **`committer`**
 3. **`frontend-designer`** builds the UI against that contract. → **`committer`**
-4. **`test-debugger`** adds/updates tests, runs the suite, fixes failures.
-   → **`committer`**
-5. **Orchestrator** summarizes the result and flags anything open.
+4. **`code-reviewer`** inspects all new changes from steps 2–3 for bugs,
+   security gaps, type errors, and edge cases. Returns a structured issue report
+   with a "Handoff for test-debugger" section.
+5. **`test-debugger`** acts on the code-reviewer's issue list: fixes any bugs
+   found, writes/updates tests, runs the full suite. → **`committer`**
+6. **Orchestrator** summarizes the result and flags anything open.
 
 Steps 2 and 3 can run in parallel once the API contract is agreed up front.
 When they can't, do backend first so the frontend has a real contract to build
 against.
+
+The `code-reviewer` always runs after implementation and before `test-debugger`.
+Its "Handoff" section is the direct input brief for `test-debugger` — pass it
+verbatim so no context is lost between the two agents.
 
 ---
 
