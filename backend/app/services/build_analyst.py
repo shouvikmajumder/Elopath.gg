@@ -3,9 +3,10 @@ import re
 
 import anthropic
 
-from app.core.config import settings
-from app.db.database import get_cached_match
+from app.core.config import settings, PLATFORM_TO_REGIONAL
+from app.db.database import get_cached_match, save_match_cache
 from app.services import data_dragon as dd
+from app.services.riot_api import RiotAPIClient
 
 _SYSTEM_PROMPT = """You are an expert League of Legends build theorist with deep knowledge of the current meta.
 Given a champion, their role, and the full match composition, recommend the optimal 6-item build plus boots.
@@ -29,8 +30,17 @@ Use current patch item names. Tailor reasoning to the specific enemy threats pre
 
 async def analyze_match_build(platform: str, match_id: str, puuid: str) -> dict:
     raw = await get_cached_match(match_id)
-    if not raw:
-        raise ValueError(f"Match {match_id} not found in cache")
+    if raw is None:
+        platform_lower = platform.lower()
+        if platform_lower not in PLATFORM_TO_REGIONAL:
+            raise ValueError(
+                f"Invalid platform '{platform}'. "
+                f"Valid platforms: {', '.join(sorted(PLATFORM_TO_REGIONAL))}"
+            )
+        client = RiotAPIClient()
+        raw = await client.get_match(match_id, platform_lower)
+        region = PLATFORM_TO_REGIONAL[platform_lower]
+        await save_match_cache(match_id, region, raw)
 
     participants = raw.get("info", {}).get("participants", [])
     target = next((p for p in participants if p.get("puuid") == puuid), None)
@@ -47,6 +57,9 @@ async def analyze_match_build(platform: str, match_id: str, puuid: str) -> dict:
     lane_opponent = _find_lane_opponent(target, enemies)
 
     user_msg = _build_user_message(champion, role, lane_opponent, allies, enemies)
+
+    if not settings.ANTHROPIC_API_KEY:
+        raise ValueError("ANTHROPIC_API_KEY is not configured. Set it in backend/.env")
 
     client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
     response = await client.messages.create(
@@ -67,11 +80,10 @@ async def analyze_match_build(platform: str, match_id: str, puuid: str) -> dict:
     name_to_id = {v["name"].lower(): k for k, v in items_data.items()}
 
     def enrich(item_dict: dict) -> dict:
+        if not item_dict or "name" not in item_dict:
+            return {"name": "", "reasoning": "", "icon": ""}
         item_id_str = name_to_id.get(item_dict["name"].lower())
-        if item_id_str:
-            item_dict["icon"] = dd.item_icon_url(int(item_id_str), version)
-        else:
-            item_dict["icon"] = ""
+        item_dict["icon"] = dd.item_icon_url(int(item_id_str), version) if item_id_str else ""
         return item_dict
 
     parsed["items"] = [enrich(i) for i in parsed.get("items", [])]

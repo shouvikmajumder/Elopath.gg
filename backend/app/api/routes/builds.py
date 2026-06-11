@@ -81,6 +81,7 @@ async def get_match_build_analysis(platform: str, match_id: str, puuid: str):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        print(f"[build_analyst] ERROR for match={match_id} puuid={puuid}: {e}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
     await save_analysis(match_id, puuid, result)
