@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api.routes import champions, builds, summoner
+from app.api.routes import champions, builds, summoner, match
 from app.db.database import init_db
 
 
@@ -31,6 +31,7 @@ app.add_middleware(
 app.include_router(champions.router, prefix="/api/v1/champions", tags=["champions"])
 app.include_router(builds.router, prefix="/api/v1/builds", tags=["builds"])
 app.include_router(summoner.router, prefix="/api/v1/summoner", tags=["summoner"])
+app.include_router(match.router, prefix="/api/v1/match", tags=["match"])
 
 
 @app.get("/health")
