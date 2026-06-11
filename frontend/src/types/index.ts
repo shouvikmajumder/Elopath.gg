@@ -126,3 +126,17 @@ export interface MatchDetailResponse {
   blue_team: MatchParticipant[]
   red_team: MatchParticipant[]
 }
+
+export interface AnalyzedItem {
+  name: string
+  reasoning: string
+  icon: string
+}
+
+export interface BuildAnalysisResponse {
+  champion: string
+  role: string
+  items: AnalyzedItem[]
+  boots: AnalyzedItem
+  comp_summary: string
+}
