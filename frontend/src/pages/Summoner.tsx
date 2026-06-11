@@ -162,7 +162,12 @@ export default function Summoner() {
               {profile.matches.length > 0 ? (
                 <div className="space-y-2">
                   {profile.matches.map(match => (
-                    <MatchRow key={match.match_id} match={match} />
+                    <MatchRow
+                      key={match.match_id}
+                      match={match}
+                      platform={platform ?? ''}
+                      currentPuuid={profile.summoner.puuid}
+                    />
                   ))}
                 </div>
               ) : (

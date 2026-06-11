@@ -97,3 +97,32 @@ export interface SummonerProfile {
   champion_stats: ChampionStat[]
   version: string
 }
+
+export interface ItemSlot {
+  id: number
+  name: string
+  icon: string
+}
+
+export interface MatchParticipant {
+  puuid: string
+  summoner_name: string
+  champion: string
+  champion_icon: string
+  role: string
+  kills: number
+  deaths: number
+  assists: number
+  kda: number
+  cs: number
+  win: boolean
+  items: (ItemSlot | null)[]
+}
+
+export interface MatchDetailResponse {
+  match_id: string
+  game_duration: number
+  winning_team: 100 | 200 | null
+  blue_team: MatchParticipant[]
+  red_team: MatchParticipant[]
+}
