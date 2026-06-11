@@ -47,3 +47,53 @@ export interface BuildRequest {
   ally_team: string[]
   enemy_team: string[]
 }
+
+export interface SummonerInfo {
+  puuid: string
+  game_name: string
+  tag_line: string
+  profile_icon_url: string
+  summoner_level: number
+}
+
+export interface RankedStats {
+  tier: string
+  rank: string
+  league_points: number
+  wins: number
+  losses: number
+  win_rate: number
+}
+
+export interface MatchSummary {
+  match_id: string
+  champion: string
+  champion_icon: string
+  win: boolean
+  kills: number
+  deaths: number
+  assists: number
+  kda: number
+  cs: number
+  game_duration: number
+  game_creation: number
+  queue_id: number
+  role: string
+}
+
+export interface ChampionStat {
+  champion: string
+  champion_icon: string
+  games: number
+  wins: number
+  losses: number
+  win_rate: number
+}
+
+export interface SummonerProfile {
+  summoner: SummonerInfo
+  ranked: RankedStats | null
+  matches: MatchSummary[]
+  champion_stats: ChampionStat[]
+  version: string
+}

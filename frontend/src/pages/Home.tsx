@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { ChevronRight, Zap } from 'lucide-react'
 import ChampionSearch from '../components/ChampionSearch'
 import { useChampions } from '../hooks/useChampions'
@@ -35,6 +35,9 @@ function Nav() {
           <a href="/" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
             Items
           </a>
+          <Link to="/profile" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
+            Profile
+          </Link>
           <span className="font-rajdhani text-xs text-ink-3 border border-[#2A3147] px-2 py-1">
             PATCH 14.24
           </span>

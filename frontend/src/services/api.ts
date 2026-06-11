@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { BuildRequest, BuildRecommendation, Champion } from '../types'
+import type { BuildRequest, BuildRecommendation, Champion, SummonerProfile } from '../types'
 
 const client = axios.create({
   baseURL: '/api/v1',
@@ -20,6 +20,17 @@ export async function fetchBuildRecommendation(
   req: BuildRequest
 ): Promise<BuildRecommendation> {
   const { data } = await client.post('/builds/recommend', req)
+  return data
+}
+
+export async function fetchSummonerProfile(
+  platform: string,
+  gameName: string,
+  tagLine: string
+): Promise<SummonerProfile> {
+  const { data } = await client.get(
+    `/summoner/${platform}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`
+  )
   return data
 }
 
