@@ -12,12 +12,12 @@ you) and delegates specialized work to the subagents defined in
 <!-- Fill these in for your app. Keep this section current — every subagent
      reads CLAUDE.md, so accurate stack info here improves all of them. -->
 
-- **App:** `<name / one-line description of what it does>`
-- **Frontend:** `<e.g. Next.js 14 (App Router) + React + TypeScript + Tailwind>`
-- **Backend:** `<e.g. FastAPI + Python 3.12, Supabase/Postgres>`
-- **Run commands:** `<e.g. frontend: npm run dev | backend: uvicorn app.main:app --reload>`
-- **Tests:** `<e.g. pytest (backend), vitest + React Testing Library (frontend)>`
-- **Conventions:** `<e.g. strict typing, no any, REST under /api/v1, snake_case in DB>`
+- **App:** `Elopath.gg — League of Legends matchup-specific build optimizer and summoner profile lookup`
+- **Frontend:** `React 18 + TypeScript + Vite + Tailwind CSS + React Query + React Router v6`
+- **Backend:** `FastAPI + Python 3.12 + Pydantic v2 + aiosqlite (SQLite via elopath.db) + httpx`
+- **Run commands:** `frontend: cd frontend && npm run dev | backend: cd backend && uvicorn app.main:app --reload`
+- **Tests:** `pytest (backend) — no frontend test suite yet`
+- **Conventions:** `strict TypeScript (no any), REST under /api/v1, snake_case in DB and API responses, camelCase in frontend`
 
 ---
 
@@ -33,7 +33,7 @@ feature request:
    choice is ambiguous, opinionated, or destructive (migrations, deletions,
    schema changes, dependency bumps).
 2. **Decompose** the feature into ordered, self-contained subtasks and decide
-   which subagent owns each (see Delegation map).
+   which subagent owns each (se  e Delegation map).
 3. **Delegate** each subtask with a crisp brief. Subagents run in their own
    context window and don't see this conversation, so include everything they
    need: the goal, the relevant files, the API contract, and the definition of
