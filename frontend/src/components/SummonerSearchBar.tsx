@@ -74,7 +74,7 @@ export default function SummonerSearchBar({
         {size === 'default' && (
           <button
             onClick={handleSearch}
-            className="flex items-center justify-center gap-2 px-6 py-3.5 font-cinzel font-semibold text-sm tracking-[0.2em] uppercase bg-gold text-surface hover:bg-gold-light transition-all duration-200"
+            className="flex items-center justify-center gap-2 px-6 py-3.5 font-playfair font-semibold text-sm tracking-[0.2em] uppercase bg-gold text-surface hover:bg-gold-light transition-all duration-200"
           >
             Search
             <ChevronRight size={14} />
@@ -84,7 +84,7 @@ export default function SummonerSearchBar({
           <button
             onClick={handleSearch}
             aria-label="Search"
-            className="flex items-center justify-center px-4 py-2 font-cinzel font-semibold text-xs tracking-wider uppercase bg-gold text-surface hover:bg-gold-light transition-all duration-200"
+            className="flex items-center justify-center px-4 py-2 font-playfair font-semibold text-xs tracking-wider uppercase bg-gold text-surface hover:bg-gold-light transition-all duration-200"
           >
             <Search size={14} />
           </button>

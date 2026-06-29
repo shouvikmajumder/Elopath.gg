@@ -21,7 +21,7 @@ function Nav({ breadcrumbs }: { breadcrumbs: string[] }) {
     <nav className="sticky top-0 z-50 border-b border-[#2A3147]/80 bg-surface/95 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link to="/" className="font-cinzel text-lg font-bold">
+          <Link to="/" className="font-playfair text-lg font-bold">
             <span className="text-ink">ELOPATH</span>
             <span className="text-gold">.GG</span>
           </Link>
@@ -37,7 +37,7 @@ function Nav({ breadcrumbs }: { breadcrumbs: string[] }) {
           </div>
         </div>
         <Link
-          to="/"
+          to="/champions"
           className="flex items-center gap-1.5 font-rajdhani text-xs text-ink-2 hover:text-gold transition-colors tracking-wider uppercase"
         >
           <ArrowLeft size={12} />
@@ -134,7 +134,7 @@ export default function Build() {
 
             {/* Names */}
             <div className="flex-1 min-w-0">
-              <h1 className="font-cinzel font-bold text-2xl md:text-4xl text-ink leading-none tracking-wide">
+              <h1 className="font-playfair font-bold text-2xl md:text-4xl text-ink leading-none tracking-wide">
                 {myChampion?.name ?? championId}
               </h1>
               <p className="font-rajdhani text-ink-3 text-sm mt-1">{roleLabel}</p>
@@ -188,9 +188,9 @@ export default function Build() {
             {!build && !isLoading && (
               <div className="border border-[#2A3147] bg-surface-1 p-8 text-center">
                 <div className="w-12 h-12 border border-gold-dark/30 mx-auto mb-4 flex items-center justify-center">
-                  <span className="font-cinzel text-gold text-xl">?</span>
+                  <span className="font-playfair text-gold text-xl">?</span>
                 </div>
-                <p className="font-cinzel text-ink font-semibold text-lg mb-2">
+                <p className="font-playfair text-ink font-semibold text-lg mb-2">
                   Configure Your Matchup
                 </p>
                 <p className="font-rajdhani text-ink-2 text-sm mb-6">
@@ -208,7 +208,7 @@ export default function Build() {
             {isLoading && (
               <div className="border border-[#2A3147] bg-surface-1 p-12 text-center">
                 <Loader2 className="w-8 h-8 text-gold animate-spin mx-auto mb-4" />
-                <p className="font-cinzel text-ink-2 text-sm tracking-wider">
+                <p className="font-playfair text-ink-2 text-sm tracking-wider">
                   Analyzing matchup data...
                 </p>
               </div>
@@ -219,7 +219,7 @@ export default function Build() {
               <div className="border border-loss/30 bg-surface-1 p-6">
                 <div className="flex items-center gap-3 mb-3">
                   <AlertTriangle className="text-loss flex-shrink-0" size={18} />
-                  <p className="font-cinzel font-semibold text-ink">Backend Unavailable</p>
+                  <p className="font-playfair font-semibold text-ink">Backend Unavailable</p>
                 </div>
                 <p className="font-rajdhani text-ink-2 text-sm mb-4">
                   Could not reach the Elopath API. Make sure the backend server is running on port 8000.
@@ -234,7 +234,7 @@ export default function Build() {
             {build && !isLoading && (
               <div className="border border-[#2A3147] bg-surface-1 p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-cinzel font-bold text-gold text-lg tracking-wide">
+                  <h2 className="font-playfair font-bold text-gold text-lg tracking-wide">
                     Optimal Build
                   </h2>
                   <button
@@ -257,7 +257,7 @@ export default function Build() {
                 onClick={() => setPanelOpen(p => !p)}
                 className="w-full flex items-center justify-between p-4 border-b border-[#2A3147] hover:bg-surface-2 transition-colors lg:cursor-default"
               >
-                <span className="font-cinzel font-semibold text-xs tracking-[0.25em] text-gold uppercase">
+                <span className="font-playfair font-semibold text-xs tracking-[0.25em] text-gold uppercase">
                   Matchup Setup
                 </span>
                 <ChevronRight
@@ -282,7 +282,7 @@ export default function Build() {
                     onClick={handleGetBuild}
                     disabled={!laneOpponent || isLoading}
                     className={`
-                      w-full mt-6 py-3 font-cinzel font-semibold text-sm tracking-[0.2em] uppercase
+                      w-full mt-6 py-3 font-playfair font-semibold text-sm tracking-[0.2em] uppercase
                       flex items-center justify-center gap-2 transition-all duration-200
                       ${laneOpponent && !isLoading
                         ? 'bg-gold text-surface hover:bg-gold-light cursor-pointer'

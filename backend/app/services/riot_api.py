@@ -55,3 +55,7 @@ class RiotAPIClient:
         url = f"{platform_host_for(platform)}/lol/league/v4/entries/by-puuid/{puuid}"
         return await self._get(url)
 
+    async def get_active_game(self, platform: str, puuid: str) -> dict:
+        url = f"{platform_host_for(platform)}/lol/spectator/v5/active-games/by-puuid/{puuid}"
+        return await self._get(url)
+

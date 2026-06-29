@@ -66,7 +66,7 @@ export default function ItemIcon({
               </p>
             )}
             {item.gold > 0 && (
-              <p className="font-orbitron text-gold-light text-xs mt-1">
+              <p className="font-rajdhani text-gold-light text-xs mt-1">
                 {item.gold.toLocaleString()}g
               </p>
             )}

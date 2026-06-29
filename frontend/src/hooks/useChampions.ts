@@ -12,7 +12,7 @@ export function useChampions() {
 
   return {
     champions: query.data?.champions ?? [],
-    version: query.data?.version ?? '14.24.1',
+    version: query.data?.version ?? '',
     isLoading: query.isLoading,
     error: query.error,
   }

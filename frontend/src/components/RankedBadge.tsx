@@ -25,7 +25,7 @@ export default function RankedBadge({ ranked }: RankedBadgeProps) {
   if (!ranked) {
     return (
       <div className="border border-[#2A3147] bg-surface-2 px-4 py-2.5">
-        <p className="font-cinzel font-semibold text-ink-2 text-sm">Unranked</p>
+        <p className="font-playfair font-semibold text-ink-2 text-sm">Unranked</p>
         <p className="font-rajdhani text-xs text-ink-3 mt-0.5">No ranked solo/duo data</p>
       </div>
     )
@@ -36,7 +36,7 @@ export default function RankedBadge({ ranked }: RankedBadgeProps) {
 
   return (
     <div className="border border-[#2A3147] bg-surface-2 px-4 py-2.5">
-      <p className={`font-cinzel font-bold text-sm tracking-wide ${colorClass}`}>
+      <p className={`font-playfair font-bold text-sm tracking-wide ${colorClass}`}>
         {tierLabel(tier)} {rank}
       </p>
       <p className="font-rajdhani text-xs text-ink-2 mt-0.5">
