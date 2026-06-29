@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api.routes import champions, builds, summoner, match
+from app.api.routes import champions, builds, summoner, match, live_game
 from app.db.database import init_db
 
 
@@ -32,6 +32,7 @@ app.include_router(champions.router, prefix="/api/v1/champions", tags=["champion
 app.include_router(builds.router, prefix="/api/v1/builds", tags=["builds"])
 app.include_router(summoner.router, prefix="/api/v1/summoner", tags=["summoner"])
 app.include_router(match.router, prefix="/api/v1/match", tags=["match"])
+app.include_router(live_game.router, prefix="/api/v1/live-game", tags=["live-game"])
 
 
 @app.get("/health")
