@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { isAxiosError } from 'axios'
-import { ArrowLeft, ChevronRight, Loader2, AlertTriangle, SearchX } from 'lucide-react'
+import { ChevronRight, Loader2, AlertTriangle, SearchX } from 'lucide-react'
 import SummonerSearchBar from '../components/SummonerSearchBar'
 import RankedBadge from '../components/RankedBadge'
 import MatchRow from '../components/MatchRow'
@@ -30,13 +30,14 @@ function Nav({ breadcrumb }: { breadcrumb: string }) {
             </span>
           </div>
         </div>
-        <Link
-          to="/"
-          className="flex items-center gap-1.5 font-rajdhani text-xs text-ink-2 hover:text-gold transition-colors tracking-wider uppercase"
-        >
-          <ArrowLeft size={12} />
-          New Search
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link to="/" className="font-rajdhani text-sm font-semibold tracking-wider text-gold transition-colors uppercase">
+            Profile
+          </Link>
+          <Link to="/champions" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
+            Champions
+          </Link>
+        </div>
       </div>
     </nav>
   )

@@ -10,6 +10,9 @@ function Nav() {
           <span className="text-gold">.GG</span>
         </Link>
         <div className="flex items-center gap-6">
+          <Link to="/" className="font-rajdhani text-sm font-semibold tracking-wider text-gold transition-colors uppercase">
+            Profile
+          </Link>
           <Link to="/champions" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
             Champions
           </Link>
