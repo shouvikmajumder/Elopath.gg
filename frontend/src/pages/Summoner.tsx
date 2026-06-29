@@ -57,7 +57,12 @@ export default function Summoner() {
   const decodedTagLine = tagLine ? decodeURIComponent(tagLine) : ''
 
   const { profile, isLoading, error } = useSummonerProfile(platform, gameName, tagLine)
-  const { data: liveGame, isError: liveGameError } = useLiveGame(platform ?? null, profile?.summoner.puuid ?? null)
+  const {
+    data: liveGame,
+    isError: liveGameError,
+    isFetching: liveGameFetching,
+    refetch: refetchLiveGame,
+  } = useLiveGame(platform ?? null, profile?.summoner.puuid ?? null)
 
   const [activeTab, setActiveTab] = useState<Tab>('overview')
 
@@ -165,19 +170,19 @@ export default function Summoner() {
               >
                 Overview
               </button>
-              {liveGame && (
-                <button
-                  onClick={() => setActiveTab('live')}
-                  className={`flex items-center gap-2 px-4 py-2.5 font-rajdhani text-sm font-semibold tracking-wider uppercase transition-colors ${
-                    activeTab === 'live'
-                      ? 'text-gold border-b-2 border-gold -mb-px'
-                      : 'text-ink-3 hover:text-ink'
-                  }`}
-                >
+              <button
+                onClick={() => setActiveTab('live')}
+                className={`flex items-center gap-2 px-4 py-2.5 font-rajdhani text-sm font-semibold tracking-wider uppercase transition-colors ${
+                  activeTab === 'live'
+                    ? 'text-gold border-b-2 border-gold -mb-px'
+                    : 'text-ink-3 hover:text-ink'
+                }`}
+              >
+                {liveGame && (
                   <span className="w-1.5 h-1.5 rounded-full bg-loss animate-pulse flex-shrink-0" aria-hidden="true" />
-                  Live
-                </button>
-              )}
+                )}
+                Live
+              </button>
             </div>
 
             {/* Overview tab */}
@@ -225,19 +230,61 @@ export default function Summoner() {
             )}
 
             {/* Live tab */}
-            {activeTab === 'live' && liveGameError && !liveGame && (
-              <div className="border border-loss/30 bg-surface-1 p-4 animate-fade-up">
-                <p className="font-rajdhani text-ink-2 text-sm">Unable to load live game data. The game may have ended.</p>
-              </div>
-            )}
-            {activeTab === 'live' && liveGame && (
-              <div className="animate-fade-up">
-                <LiveGameBanner
-                  liveGame={liveGame}
-                  summonerPuuid={profile.summoner.puuid}
-                  platform={platform ?? ''}
-                />
-              </div>
+            {activeTab === 'live' && (
+              <>
+                {/* Checking state */}
+                {liveGameFetching && !liveGame && (
+                  <div className="border border-[#2A3147] bg-surface-1 p-8 text-center animate-fade-up">
+                    <Loader2 className="w-6 h-6 text-gold animate-spin mx-auto mb-3" />
+                    <p className="font-rajdhani text-ink-2 text-sm tracking-wide">Checking for live game...</p>
+                  </div>
+                )}
+
+                {/* Not in game */}
+                {!liveGameFetching && !liveGame && !liveGameError && (
+                  <div className="border border-[#2A3147] bg-surface-1 p-8 text-center animate-fade-up">
+                    <p className="font-rajdhani text-ink-2 text-sm mb-3">
+                      {profile.summoner.game_name} is not currently in an active game.
+                    </p>
+                    <button
+                      onClick={() => void refetchLiveGame()}
+                      className="font-rajdhani text-xs font-semibold tracking-wider uppercase text-ink-3 hover:text-gold border border-[#2A3147] hover:border-gold/40 px-4 py-2 transition-colors"
+                    >
+                      Check Again
+                    </button>
+                  </div>
+                )}
+
+                {/* Error state */}
+                {!liveGame && liveGameError && (
+                  <div className="border border-loss/30 bg-surface-1 p-6 animate-fade-up">
+                    <div className="flex items-center gap-3 mb-3">
+                      <AlertTriangle className="text-loss flex-shrink-0" size={16} />
+                      <p className="font-rajdhani text-sm font-semibold text-ink">Unable to load live game data</p>
+                    </div>
+                    <p className="font-rajdhani text-ink-2 text-xs mb-4">
+                      The API may be rate limited or the game may have just ended.
+                    </p>
+                    <button
+                      onClick={() => void refetchLiveGame()}
+                      className="font-rajdhani text-xs font-semibold tracking-wider uppercase text-ink-3 hover:text-gold border border-[#2A3147] hover:border-gold/40 px-4 py-2 transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
+
+                {/* Active game */}
+                {liveGame && (
+                  <div className="animate-fade-up">
+                    <LiveGameBanner
+                      liveGame={liveGame}
+                      summonerPuuid={profile.summoner.puuid}
+                      platform={platform ?? ''}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
