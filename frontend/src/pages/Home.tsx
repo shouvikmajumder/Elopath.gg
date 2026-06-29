@@ -21,6 +21,9 @@ const ROLE_DISPLAY: Record<Role, string> = {
 }
 
 function Nav() {
+  const { version } = useChampions()
+  const patchLabel = version ? version.split('.').slice(0, 2).join('.') : null
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2A3147]/80 bg-surface/90 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -35,9 +38,11 @@ function Nav() {
           <Link to="/champions" className="font-rajdhani text-sm font-semibold tracking-wider text-gold transition-colors uppercase">
             Champions
           </Link>
-          <span className="font-rajdhani text-xs text-ink-3 border border-[#2A3147] px-2 py-1">
-            PATCH 14.24
-          </span>
+          {patchLabel && (
+            <span className="font-rajdhani text-xs text-ink-3 border border-[#2A3147] px-2 py-1">
+              PATCH {patchLabel}
+            </span>
+          )}
         </div>
       </div>
     </nav>
