@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { isAxiosError } from 'axios'
 import { ChevronRight, Loader2, AlertTriangle, SearchX } from 'lucide-react'
@@ -9,6 +10,8 @@ import LiveGameBanner from '../components/LiveGameBanner'
 import { useSummonerProfile } from '../hooks/useSummonerProfile'
 import { useLiveGame } from '../hooks/useLiveGame'
 import { regionLabel } from '../constants/regions'
+
+type Tab = 'overview' | 'live'
 
 function Nav({ breadcrumb }: { breadcrumb: string }) {
   return (
@@ -54,7 +57,13 @@ export default function Summoner() {
   const decodedTagLine = tagLine ? decodeURIComponent(tagLine) : ''
 
   const { profile, isLoading, error } = useSummonerProfile(platform, gameName, tagLine)
-  const { data: liveGame } = useLiveGame(platform ?? null, profile?.summoner.puuid ?? null)
+  const { data: liveGame, isError: liveGameError } = useLiveGame(platform ?? null, profile?.summoner.puuid ?? null)
+
+  const [activeTab, setActiveTab] = useState<Tab>('overview')
+
+  useEffect(() => {
+    if (liveGame) setActiveTab('live')
+  }, [liveGame])
 
   const breadcrumb = `${decodedGameName}#${decodedTagLine}`
 
@@ -144,54 +153,92 @@ export default function Summoner() {
               <RankedBadge ranked={profile.ranked} />
             </div>
 
-            {/* Live game */}
-            {liveGame && (
-              <div className="animate-fade-up" style={{ animationDelay: '80ms' }}>
+            {/* Tab bar */}
+            <div className="flex items-center gap-1 border-b border-[#2A3147] animate-fade-up" style={{ animationDelay: '100ms' }}>
+              <button
+                onClick={() => setActiveTab('overview')}
+                className={`px-4 py-2.5 font-rajdhani text-sm font-semibold tracking-wider uppercase transition-colors ${
+                  activeTab === 'overview'
+                    ? 'text-gold border-b-2 border-gold -mb-px'
+                    : 'text-ink-3 hover:text-ink'
+                }`}
+              >
+                Overview
+              </button>
+              {liveGame && (
+                <button
+                  onClick={() => setActiveTab('live')}
+                  className={`flex items-center gap-2 px-4 py-2.5 font-rajdhani text-sm font-semibold tracking-wider uppercase transition-colors ${
+                    activeTab === 'live'
+                      ? 'text-gold border-b-2 border-gold -mb-px'
+                      : 'text-ink-3 hover:text-ink'
+                  }`}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-loss animate-pulse flex-shrink-0" aria-hidden="true" />
+                  Live
+                </button>
+              )}
+            </div>
+
+            {/* Overview tab */}
+            {activeTab === 'overview' && (
+              <>
+                {/* Champion stats */}
+                {profile.champion_stats.length > 0 && (
+                  <div className="animate-fade-up" style={{ animationDelay: '160ms' }}>
+                    <h2 className="font-playfair font-bold text-gold text-sm tracking-[0.25em] uppercase mb-3">
+                      Champion Stats
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {profile.champion_stats.map(stat => (
+                        <ChampionStatCard key={stat.champion} stat={stat} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recent matches */}
+                <div className="animate-fade-up" style={{ animationDelay: '240ms' }}>
+                  <h2 className="font-playfair font-bold text-gold text-sm tracking-[0.25em] uppercase mb-3">
+                    Recent Matches
+                  </h2>
+                  {profile.matches.length > 0 ? (
+                    <div className="space-y-2">
+                      {profile.matches.map(match => (
+                        <MatchRow
+                          key={match.match_id}
+                          match={match}
+                          platform={platform ?? ''}
+                          currentPuuid={profile.summoner.puuid}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="border border-[#2A3147] bg-surface-1 p-8 text-center">
+                      <p className="font-rajdhani text-ink-2 text-sm">
+                        No recent matches found.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Live tab */}
+            {activeTab === 'live' && liveGameError && !liveGame && (
+              <div className="border border-loss/30 bg-surface-1 p-4 animate-fade-up">
+                <p className="font-rajdhani text-ink-2 text-sm">Unable to load live game data. The game may have ended.</p>
+              </div>
+            )}
+            {activeTab === 'live' && liveGame && (
+              <div className="animate-fade-up">
                 <LiveGameBanner
                   liveGame={liveGame}
                   summonerPuuid={profile.summoner.puuid}
+                  platform={platform ?? ''}
                 />
               </div>
             )}
-
-            {/* Champion stats */}
-            {profile.champion_stats.length > 0 && (
-              <div className="animate-fade-up" style={{ animationDelay: '160ms' }}>
-                <h2 className="font-playfair font-bold text-gold text-sm tracking-[0.25em] uppercase mb-3">
-                  Champion Stats
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {profile.champion_stats.map(stat => (
-                    <ChampionStatCard key={stat.champion} stat={stat} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Recent matches */}
-            <div className="animate-fade-up" style={{ animationDelay: '240ms' }}>
-              <h2 className="font-playfair font-bold text-gold text-sm tracking-[0.25em] uppercase mb-3">
-                Recent Matches
-              </h2>
-              {profile.matches.length > 0 ? (
-                <div className="space-y-2">
-                  {profile.matches.map(match => (
-                    <MatchRow
-                      key={match.match_id}
-                      match={match}
-                      platform={platform ?? ''}
-                      currentPuuid={profile.summoner.puuid}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="border border-[#2A3147] bg-surface-1 p-8 text-center">
-                  <p className="font-rajdhani text-ink-2 text-sm">
-                    No recent matches found.
-                  </p>
-                </div>
-              )}
-            </div>
           </div>
         )}
       </div>

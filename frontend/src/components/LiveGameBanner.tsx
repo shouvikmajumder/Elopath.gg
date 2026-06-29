@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import type { LiveGameData, LiveGameParticipant } from '../types'
 
 interface LiveGameBannerProps {
   liveGame: LiveGameData
   summonerPuuid: string
+  platform: string
 }
 
 function formatElapsed(ms: number): string {
@@ -16,9 +18,15 @@ function formatElapsed(ms: number): string {
 interface ParticipantCardProps {
   participant: LiveGameParticipant
   isCurrentSummoner: boolean
+  platform: string
 }
 
-function ParticipantCard({ participant, isCurrentSummoner }: ParticipantCardProps) {
+function ParticipantCard({ participant, isCurrentSummoner, platform }: ParticipantCardProps) {
+  const [gameName, tagLine] = participant.summoner_name.split('#')
+  const profileHref = gameName && tagLine
+    ? `/summoner/${platform}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`
+    : null
+
   return (
     <div
       className={`
@@ -34,15 +42,34 @@ function ParticipantCard({ participant, isCurrentSummoner }: ParticipantCardProp
         className={`w-8 h-8 object-cover flex-shrink-0 border ${isCurrentSummoner ? 'border-gold' : 'border-[#2A3147]'}`}
       />
       <div className="min-w-0 flex-1">
-        <p className={`font-rajdhani text-xs font-semibold truncate ${isCurrentSummoner ? 'text-gold' : 'text-ink'}`}>
-          {participant.summoner_name}
-        </p>
+        {profileHref ? (
+          <Link
+            to={profileHref}
+            className={`font-rajdhani text-xs font-semibold truncate block hover:underline ${isCurrentSummoner ? 'text-gold' : 'text-ink hover:text-gold'}`}
+          >
+            {participant.summoner_name}
+          </Link>
+        ) : (
+          <p className={`font-rajdhani text-xs font-semibold truncate ${isCurrentSummoner ? 'text-gold' : 'text-ink'}`}>
+            {participant.summoner_name}
+          </p>
+        )}
         <p className="font-rajdhani text-[10px] text-ink-3 truncate">
           {participant.champion_name}
           {participant.position === 'JUNGLE' && (
-            <span className="ml-1 text-ink-4">· Jungle</span>
+            <span className="inline-block ml-1 px-1 py-0.5 bg-[#2A3147] font-rajdhani text-[9px] text-ink-3 uppercase tracking-wider leading-none rounded-sm">
+              JG
+            </span>
           )}
         </p>
+        {isCurrentSummoner && (
+          <Link
+            to={`/build?champion=${encodeURIComponent(participant.champion_name)}`}
+            className="font-rajdhani text-[10px] text-gold hover:underline tracking-wide mt-0.5 block"
+          >
+            Get Build →
+          </Link>
+        )}
       </div>
     </div>
   )
@@ -54,9 +81,10 @@ interface TeamColumnProps {
   borderColorClass: string
   participants: LiveGameParticipant[]
   summonerPuuid: string
+  platform: string
 }
 
-function TeamColumn({ label, labelColorClass, borderColorClass, participants, summonerPuuid }: TeamColumnProps) {
+function TeamColumn({ label, labelColorClass, borderColorClass, participants, summonerPuuid, platform }: TeamColumnProps) {
   return (
     <div className="flex-1 min-w-0">
       <p className={`font-playfair font-bold text-xs tracking-[0.2em] uppercase mb-2 ${labelColorClass} border-b ${borderColorClass} pb-1`}>
@@ -68,6 +96,7 @@ function TeamColumn({ label, labelColorClass, borderColorClass, participants, su
             key={p.puuid}
             participant={p}
             isCurrentSummoner={p.puuid === summonerPuuid}
+            platform={platform}
           />
         ))}
       </div>
@@ -75,7 +104,7 @@ function TeamColumn({ label, labelColorClass, borderColorClass, participants, su
   )
 }
 
-export default function LiveGameBanner({ liveGame, summonerPuuid }: LiveGameBannerProps) {
+export default function LiveGameBanner({ liveGame, summonerPuuid, platform }: LiveGameBannerProps) {
   const gameStarted = liveGame.game_start_time > 0
   const [elapsed, setElapsed] = useState<number>(
     gameStarted ? Date.now() - liveGame.game_start_time : 0
@@ -119,6 +148,7 @@ export default function LiveGameBanner({ liveGame, summonerPuuid }: LiveGameBann
           borderColorClass="border-blue/30"
           participants={blueTeam}
           summonerPuuid={summonerPuuid}
+          platform={platform}
         />
         <div className="w-px bg-[#2A3147] flex-shrink-0 self-stretch" aria-hidden="true" />
         <TeamColumn
@@ -127,6 +157,7 @@ export default function LiveGameBanner({ liveGame, summonerPuuid }: LiveGameBann
           borderColorClass="border-loss/30"
           participants={redTeam}
           summonerPuuid={summonerPuuid}
+          platform={platform}
         />
       </div>
     </div>
