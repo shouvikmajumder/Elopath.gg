@@ -140,3 +140,22 @@ export interface BuildAnalysisResponse {
   boots: AnalyzedItem
   comp_summary: string
 }
+
+export interface LiveGameParticipant {
+  puuid: string
+  summoner_name: string
+  team_id: number
+  champion_id: number
+  champion_name: string
+  champion_icon_url: string
+  position: string | null
+  spell1_id: number
+  spell2_id: number
+}
+
+export interface LiveGameData {
+  game_id: number
+  game_start_time: number
+  game_mode: string
+  participants: LiveGameParticipant[]
+}

@@ -5,7 +5,9 @@ import SummonerSearchBar from '../components/SummonerSearchBar'
 import RankedBadge from '../components/RankedBadge'
 import MatchRow from '../components/MatchRow'
 import ChampionStatCard from '../components/ChampionStatCard'
+import LiveGameBanner from '../components/LiveGameBanner'
 import { useSummonerProfile } from '../hooks/useSummonerProfile'
+import { useLiveGame } from '../hooks/useLiveGame'
 import { regionLabel } from '../constants/regions'
 
 function Nav({ breadcrumb }: { breadcrumb: string }) {
@@ -51,6 +53,7 @@ export default function Summoner() {
   const decodedTagLine = tagLine ? decodeURIComponent(tagLine) : ''
 
   const { profile, isLoading, error } = useSummonerProfile(platform, gameName, tagLine)
+  const { data: liveGame } = useLiveGame(platform ?? null, profile?.summoner.puuid ?? null)
 
   const breadcrumb = `${decodedGameName}#${decodedTagLine}`
 
@@ -139,6 +142,16 @@ export default function Summoner() {
               </div>
               <RankedBadge ranked={profile.ranked} />
             </div>
+
+            {/* Live game */}
+            {liveGame && (
+              <div className="animate-fade-up" style={{ animationDelay: '80ms' }}>
+                <LiveGameBanner
+                  liveGame={liveGame}
+                  summonerPuuid={profile.summoner.puuid}
+                />
+              </div>
+            )}
 
             {/* Champion stats */}
             {profile.champion_stats.length > 0 && (

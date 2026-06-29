@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { BuildRequest, BuildRecommendation, BuildAnalysisResponse, Champion, SummonerProfile, MatchDetailResponse } from '../types'
+import type { BuildRequest, BuildRecommendation, BuildAnalysisResponse, Champion, SummonerProfile, MatchDetailResponse, LiveGameData } from '../types'
 
 const client = axios.create({
   baseURL: '/api/v1',
@@ -46,6 +46,14 @@ export async function fetchBuildAnalysis(
     `/builds/analyze/${platform}/${matchId}`,
     { params: { puuid }, timeout: 30000 }
   )
+  return data
+}
+
+export async function getLiveGame(
+  platform: string,
+  puuid: string
+): Promise<LiveGameData> {
+  const { data } = await client.get<LiveGameData>(`/live-game/${platform}/${puuid}`)
   return data
 }
 
