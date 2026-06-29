@@ -37,12 +37,14 @@ class RiotAPIClient:
         self,
         puuid: str,
         platform: str,
-        queue: int = 420,
+        queue: int | None = None,
         count: int = 20,
         champion: int | None = None,
     ) -> list[str]:
         url = f"{regional_host_for(platform)}/lol/match/v5/matches/by-puuid/{puuid}/ids"
-        params: dict[str, Any] = {"queue": queue, "count": count}
+        params: dict[str, Any] = {"count": count}
+        if queue is not None:
+            params["queue"] = queue
         if champion is not None:
             params["champion"] = champion
         return await self._get(url, params)

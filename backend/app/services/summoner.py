@@ -40,7 +40,7 @@ async def get_summoner_profile(platform: str, game_name: str, tag_line: str) -> 
 
     version = await dd.get_version()
 
-    match_ids = await client.get_match_ids(puuid, platform, queue=420, count=MATCH_COUNT)
+    match_ids = await client.get_match_ids(puuid, platform, count=MATCH_COUNT)
 
     matches: list[dict] = []
     for match_id in match_ids:
