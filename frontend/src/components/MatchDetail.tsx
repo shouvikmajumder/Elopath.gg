@@ -21,7 +21,7 @@ function ItemSlotCell({ slot }: { slot: ItemSlot | null }) {
   if (!slot) {
     return (
       <div
-        className="w-8 h-8 flex-shrink-0 border border-[#2A3147] bg-[#0D1117]"
+        className="w-8 h-8 flex-shrink-0 border border-[#2A3147] bg-surface-2"
         aria-hidden="true"
       />
     )
@@ -111,7 +111,7 @@ function TeamColumn({ participants, side, currentPuuid }: TeamColumnProps) {
       >
         <span
           className={`
-            font-cinzel text-xs font-bold tracking-[0.2em] uppercase
+            font-playfair text-xs font-bold tracking-[0.2em] uppercase
             ${isBlue ? 'text-blue-400' : 'text-loss'}
           `}
         >

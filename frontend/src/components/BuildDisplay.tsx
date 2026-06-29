@@ -17,7 +17,7 @@ function ConfidenceBar({ value }: { value: number }) {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="font-orbitron text-xs text-ink-2">{pct}%</span>
+      <span className="font-rajdhani text-xs text-ink-2">{pct}%</span>
     </div>
   )
 }
@@ -30,7 +30,7 @@ function WinRateDisplay({ rate }: { rate: number }) {
 
   return (
     <div className="text-center">
-      <div className={`font-orbitron text-4xl font-bold tracking-tight ${color} animate-counter`}>
+      <div className={`font-rajdhani text-4xl font-bold tracking-tight ${color} animate-counter`}>
         {pct}%
       </div>
       <div className="font-rajdhani text-xs tracking-[0.15em] text-ink-3 mt-0.5 uppercase">
@@ -50,7 +50,7 @@ export default function BuildDisplay({ build }: BuildDisplayProps) {
           <WinRateDisplay rate={build.win_rate} />
         </div>
         <div className="bg-surface-2 p-4 text-center flex flex-col items-center justify-center gap-1">
-          <div className="font-orbitron text-2xl font-bold text-ink animate-counter">
+          <div className="font-rajdhani text-2xl font-bold text-ink animate-counter">
             {build.sample_size > 0 ? build.sample_size.toLocaleString() : '—'}
           </div>
           <div className="font-rajdhani text-xs tracking-[0.15em] text-ink-3 uppercase">
@@ -80,7 +80,7 @@ export default function BuildDisplay({ build }: BuildDisplayProps) {
       <div>
         <div className="flex items-center gap-3 mb-4">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold-dark/40 to-transparent" />
-          <span className="font-cinzel font-semibold text-xs tracking-[0.3em] text-gold uppercase">
+          <span className="font-playfair font-semibold text-xs tracking-[0.3em] text-gold uppercase">
             Optimal Build Path
           </span>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold-dark/40 to-transparent" />
@@ -132,7 +132,7 @@ export default function BuildDisplay({ build }: BuildDisplayProps) {
       <div>
         <div className="flex items-center gap-3 mb-4">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold-dark/40 to-transparent" />
-          <span className="font-cinzel font-semibold text-xs tracking-[0.3em] text-gold uppercase">
+          <span className="font-playfair font-semibold text-xs tracking-[0.3em] text-gold uppercase">
             Build Order
           </span>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold-dark/40 to-transparent" />
@@ -155,7 +155,7 @@ export default function BuildDisplay({ build }: BuildDisplayProps) {
 
               {/* Content */}
               <div className={`pb-5 ${i === build.build_order.length - 1 ? 'pb-0' : ''}`}>
-                <p className="font-cinzel font-semibold text-xs text-gold tracking-wider mb-1">
+                <p className="font-playfair font-semibold text-xs text-gold tracking-wider mb-1">
                   {phase.phase.toUpperCase()}
                 </p>
                 <p className="font-rajdhani text-ink-2 text-sm mb-2 leading-snug">
@@ -187,7 +187,7 @@ export default function BuildDisplay({ build }: BuildDisplayProps) {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold-dark/40 to-transparent" />
-            <span className="font-cinzel font-semibold text-xs tracking-[0.3em] text-gold uppercase">
+            <span className="font-playfair font-semibold text-xs tracking-[0.3em] text-gold uppercase">
               Why This Build
             </span>
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold-dark/40 to-transparent" />

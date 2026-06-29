@@ -73,7 +73,7 @@ export default function MatchRow({ match, platform, currentPuuid }: MatchRowProp
           <span className="font-rajdhani text-xs font-semibold text-ink-2 tracking-wider uppercase truncate w-full">
             {queueName(queue_id)}
           </span>
-          <span className={`font-cinzel text-xs font-bold ${win ? 'text-win' : 'text-loss'}`}>
+          <span className={`font-playfair text-xs font-bold ${win ? 'text-win' : 'text-loss'}`}>
             {win ? 'Victory' : 'Defeat'}
           </span>
           <span className="font-rajdhani text-xs text-ink-3">

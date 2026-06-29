@@ -24,16 +24,13 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2A3147]/80 bg-surface/90 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-        <a href="/" className="font-cinzel text-xl font-bold">
+        <Link to="/" className="font-playfair text-xl font-bold">
           <span className="text-ink">ELOPATH</span>
           <span className="text-gold">.GG</span>
-        </a>
+        </Link>
         <div className="flex items-center gap-6">
-          <a href="/" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
+          <Link to="/champions" className="font-rajdhani text-sm font-semibold tracking-wider text-gold transition-colors uppercase">
             Champions
-          </a>
-          <Link to="/profile" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
-            Profile
           </Link>
           <span className="font-rajdhani text-xs text-ink-3 border border-[#2A3147] px-2 py-1">
             PATCH 14.24
@@ -86,7 +83,7 @@ export default function Home() {
             className="text-center mb-4 animate-fade-up"
             style={{ animationDelay: '80ms' }}
           >
-            <h1 className="font-cinzel font-black text-5xl md:text-7xl text-ink leading-[0.9] tracking-tight">
+            <h1 className="font-playfair font-black text-5xl md:text-7xl text-ink leading-[0.9] tracking-tight">
               ONE
               <br />
               <span className="text-shadow-gold" style={{
@@ -148,7 +145,7 @@ export default function Home() {
               onClick={handleSearch}
               disabled={!selectedChampion}
               className={`
-                w-full mt-2 py-3.5 font-cinzel font-semibold text-sm tracking-[0.2em] uppercase
+                w-full mt-2 py-3.5 font-playfair font-semibold text-sm tracking-[0.2em] uppercase
                 flex items-center justify-center gap-2 transition-all duration-200
                 ${selectedChampion
                   ? 'bg-gold text-surface hover:bg-gold-light cursor-pointer'

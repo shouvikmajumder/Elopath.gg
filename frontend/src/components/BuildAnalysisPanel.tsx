@@ -17,7 +17,7 @@ function AnalyzedItemSlot({ item }: { item: AnalyzedItem }) {
         />
       ) : (
         <div
-          className="w-8 h-8 flex-shrink-0 border border-[#2A3147] bg-[#0D1117]"
+          className="w-8 h-8 flex-shrink-0 border border-[#2A3147] bg-surface-2"
           title={item.reasoning}
           aria-label={item.name}
         />
@@ -35,7 +35,7 @@ export default function BuildAnalysisPanel({ data }: BuildAnalysisPanelProps) {
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-2 border-b border-[#2A3147]">
         <Sparkles size={12} className="text-gold flex-shrink-0" />
-        <span className="font-cinzel text-xs font-bold tracking-[0.2em] text-gold uppercase">
+        <span className="font-playfair text-xs font-bold tracking-[0.2em] text-gold uppercase">
           Recommended Build
         </span>
         <span className="font-rajdhani text-[10px] text-ink-3 ml-auto uppercase tracking-wider">

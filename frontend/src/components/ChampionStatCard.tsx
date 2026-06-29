@@ -21,7 +21,7 @@ export default function ChampionStatCard({ stat }: ChampionStatCardProps) {
         </p>
       </div>
       <div className="flex-shrink-0 text-right">
-        <p className={`font-cinzel font-bold text-sm ${win_rate >= 50 ? 'text-win' : 'text-loss'}`}>
+        <p className={`font-playfair font-bold text-sm ${win_rate >= 50 ? 'text-win' : 'text-loss'}`}>
           {win_rate.toFixed(1)}%
         </p>
         <p className="font-rajdhani text-[10px] text-ink-3 tracking-wider uppercase">Win Rate</p>

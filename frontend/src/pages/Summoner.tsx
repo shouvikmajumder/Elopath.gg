@@ -13,13 +13,13 @@ function Nav({ breadcrumb }: { breadcrumb: string }) {
     <nav className="sticky top-0 z-50 border-b border-[#2A3147]/80 bg-surface/95 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link to="/" className="font-cinzel text-lg font-bold">
+          <Link to="/" className="font-playfair text-lg font-bold">
             <span className="text-ink">ELOPATH</span>
             <span className="text-gold">.GG</span>
           </Link>
           <div className="hidden sm:flex items-center gap-2 text-ink-3">
             <ChevronRight size={12} />
-            <Link to="/profile" className="font-rajdhani text-sm text-ink-3 hover:text-gold transition-colors">
+            <Link to="/" className="font-rajdhani text-sm text-ink-3 hover:text-gold transition-colors">
               Profile
             </Link>
             <ChevronRight size={12} />
@@ -29,7 +29,7 @@ function Nav({ breadcrumb }: { breadcrumb: string }) {
           </div>
         </div>
         <Link
-          to="/profile"
+          to="/"
           className="flex items-center gap-1.5 font-rajdhani text-xs text-ink-2 hover:text-gold transition-colors tracking-wider uppercase"
         >
           <ArrowLeft size={12} />
@@ -80,7 +80,7 @@ export default function Summoner() {
         {isLoading && (
           <div className="border border-[#2A3147] bg-surface-1 p-12 text-center animate-fade-up">
             <Loader2 className="w-8 h-8 text-gold animate-spin mx-auto mb-4" />
-            <p className="font-cinzel text-ink-2 text-sm tracking-wider">
+            <p className="font-playfair text-ink-2 text-sm tracking-wider">
               Loading summoner profile...
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function Summoner() {
         {error && !isLoading && errorStatus === 404 && (
           <div className="border border-loss/30 bg-surface-1 p-8 text-center animate-fade-up">
             <SearchX className="w-10 h-10 text-loss mx-auto mb-4" />
-            <p className="font-cinzel font-semibold text-ink text-lg mb-2">
+            <p className="font-playfair font-semibold text-ink text-lg mb-2">
               Summoner Not Found
             </p>
             <p className="font-rajdhani text-ink-2 text-sm">
@@ -106,7 +106,7 @@ export default function Summoner() {
           <div className="border border-loss/30 bg-surface-1 p-6 animate-fade-up">
             <div className="flex items-center gap-3 mb-3">
               <AlertTriangle className="text-loss flex-shrink-0" size={18} />
-              <p className="font-cinzel font-semibold text-ink">
+              <p className="font-playfair font-semibold text-ink">
                 {errorStatus === 429 ? 'Rate Limited' : 'Something Went Wrong'}
               </p>
             </div>
@@ -128,7 +128,7 @@ export default function Summoner() {
                 className="w-20 h-20 border-2 border-gold/40 flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
-                <h1 className="font-cinzel font-bold text-2xl md:text-3xl text-ink leading-none tracking-wide truncate">
+                <h1 className="font-playfair font-bold text-2xl md:text-3xl text-ink leading-none tracking-wide truncate">
                   {profile.summoner.game_name}
                   <span className="text-ink-3">#{profile.summoner.tag_line}</span>
                 </h1>
@@ -143,7 +143,7 @@ export default function Summoner() {
             {/* Champion stats */}
             {profile.champion_stats.length > 0 && (
               <div className="animate-fade-up" style={{ animationDelay: '160ms' }}>
-                <h2 className="font-cinzel font-bold text-gold text-sm tracking-[0.25em] uppercase mb-3">
+                <h2 className="font-playfair font-bold text-gold text-sm tracking-[0.25em] uppercase mb-3">
                   Champion Stats
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -156,7 +156,7 @@ export default function Summoner() {
 
             {/* Recent matches */}
             <div className="animate-fade-up" style={{ animationDelay: '240ms' }}>
-              <h2 className="font-cinzel font-bold text-gold text-sm tracking-[0.25em] uppercase mb-3">
+              <h2 className="font-playfair font-bold text-gold text-sm tracking-[0.25em] uppercase mb-3">
                 Recent Matches
               </h2>
               {profile.matches.length > 0 ? (

@@ -8,11 +8,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Profile />} />
+        <Route path="/champions" element={<Home />} />
         <Route path="/build/:champion/:role" element={<Build />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/profile/:platform/:gameName/:tagLine" element={<Summoner />} />
-        <Route path="*" element={<Home />} />
+        <Route path="*" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   )
