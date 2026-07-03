@@ -45,6 +45,35 @@ CREATE TABLE IF NOT EXISTS build_analyses (
     created_at INTEGER,
     PRIMARY KEY (match_id, puuid)
 );
+
+CREATE TABLE IF NOT EXISTS match_participants (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    match_id TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    champion_name TEXT NOT NULL,
+    team_position TEXT NOT NULL,
+    item0 INTEGER, item1 INTEGER, item2 INTEGER,
+    item3 INTEGER, item4 INTEGER, item5 INTEGER,
+    win INTEGER NOT NULL,
+    patch TEXT,
+    ingested_at INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_participants_lookup
+    ON match_participants(champion_name, team_position);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_participants_dedup
+    ON match_participants(match_id, champion_name);
+
+CREATE TABLE IF NOT EXISTS build_aggregates (
+    champion_name TEXT NOT NULL,
+    role TEXT NOT NULL,
+    items TEXT NOT NULL,
+    boots INTEGER,
+    win_rate REAL NOT NULL,
+    sample_size INTEGER NOT NULL,
+    patch TEXT,
+    computed_at INTEGER,
+    PRIMARY KEY (champion_name, role)
+);
 """
 
 
@@ -165,5 +194,40 @@ async def set_meta(key: str, value: str) -> None:
         await db.execute(
             "INSERT OR REPLACE INTO dd_meta (key, value, updated_at) VALUES (?,?,?)",
             (key, value, int(time.time())),
+        )
+        await db.commit()
+
+
+async def get_aggregate_build(champion: str, role: str) -> dict | None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        cursor = await db.execute(
+            "SELECT * FROM build_aggregates WHERE champion_name=? AND role=?",
+            (champion, role),
+        )
+        row = await cursor.fetchone()
+        if not row:
+            return None
+        result = dict(row)
+        result["items"] = json.loads(result["items"])
+        return result
+
+
+async def save_aggregate_build(data: dict) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """INSERT OR REPLACE INTO build_aggregates
+               (champion_name, role, items, boots, win_rate, sample_size, patch, computed_at)
+               VALUES (?,?,?,?,?,?,?,?)""",
+            (
+                data["champion_name"],
+                data["role"],
+                json.dumps(data.get("items", [])),
+                data.get("boots"),
+                data["win_rate"],
+                data["sample_size"],
+                data.get("patch"),
+                int(time.time()),
+            ),
         )
         await db.commit()

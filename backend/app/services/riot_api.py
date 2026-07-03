@@ -61,3 +61,13 @@ class RiotAPIClient:
         url = f"{platform_host_for(platform)}/lol/spectator/v5/active-games/by-puuid/{puuid}"
         return await self._get(url)
 
+    async def get_challenger_league(
+        self, platform: str, queue: str = "RANKED_SOLO_5x5"
+    ) -> dict:
+        url = f"{platform_host_for(platform)}/lol/league/v4/challengerleagues/by-queue/{queue}"
+        return await self._get(url)
+
+    async def get_summoner_by_id(self, platform: str, summoner_id: str) -> dict:
+        url = f"{platform_host_for(platform)}/lol/summoner/v4/summoners/{summoner_id}"
+        return await self._get(url)
+

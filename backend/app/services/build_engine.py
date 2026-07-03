@@ -1,9 +1,7 @@
 """
 Build recommendation engine.
 
-Primary path:  seeded high-elo data  →  comp adjustment  →  return
-Fallback path: generic best-elo build for champion/role
-Live path:     Riot API  (not yet wired — background job placeholder)
+Priority: aggregated DB data → seeded matchup data → generic fallback
 """
 from __future__ import annotations
 import hashlib
@@ -329,7 +327,7 @@ def _generate_comp_notes(
 # ---------------------------------------------------------------------------
 
 
-def recommend_build(
+async def recommend_build(
     champion: str,
     role: str,
     lane_opponent: str,
@@ -338,8 +336,11 @@ def recommend_build(
 ) -> dict[str, Any]:
     """
     Return the single optimal build for the given matchup context.
-    Priority: seeded matchup data → seeded generic champion data → fallback.
+    Priority: aggregated DB data → seeded matchup data → generic fallback.
     """
+    # Lazy import to avoid circular dependency at module load time
+    from app.services.build_aggregator import get_build_for_champion_role
+
     # Normalize
     champion = champion.strip().title()
     role = role.strip().upper()
@@ -348,10 +349,35 @@ def recommend_build(
     comp = _analyze_comp(enemy_team)
     hash_val = _comp_hash(enemy_team + ally_team)
 
-    # Try exact matchup first
+    # ---- 1. Aggregated real-game data (highest priority) ------------------
+    agg = await get_build_for_champion_role(champion, role)
+    if agg:
+        items, boots = _adjust_for_comp(
+            agg["items"],
+            agg["boots"] or 3006,
+            comp,
+        )
+        has_teams = bool(ally_team or enemy_team)
+        final_notes = _generate_comp_notes(comp, []) if has_teams else []
+
+        return {
+            "champion": champion,
+            "role": role,
+            "lane_opponent": lane_opponent,
+            "items": items,
+            "boots": boots,
+            "win_rate": agg["win_rate"],
+            "sample_size": agg["sample_size"],
+            "confidence": min(0.9, agg["sample_size"] / 500),
+            "build_order": [],
+            "comp_notes": final_notes,
+            "comp_hash": hash_val if has_teams else "",
+            "data_source": "aggregated",
+        }
+
+    # ---- 2. Seeded matchup data -------------------------------------------
     seed = SEEDED_BUILDS.get((champion, role, lane_opponent))
 
-    # Try reversed matchup key variations
     if not seed:
         for (c, r, _), v in SEEDED_BUILDS.items():
             if c == champion and r == role:
@@ -378,7 +404,7 @@ def recommend_build(
             "data_source": "seeded",
         }
 
-    # Generic fallback
+    # ---- 3. Generic fallback ---------------------------------------------
     fallback_notes = _generate_comp_notes(comp, [])
     return {
         "champion": champion,

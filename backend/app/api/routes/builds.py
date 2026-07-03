@@ -27,7 +27,7 @@ async def get_build_recommendation(req: BuildRequest):
             detail=f"Invalid role '{req.role}'. Must be one of: {', '.join(VALID_ROLES)}",
         )
 
-    build = recommend_build(
+    build = await recommend_build(
         champion=req.champion,
         role=role,
         lane_opponent=req.lane_opponent,
