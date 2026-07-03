@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, RefreshCw, AlertTriangle, Loader2, ChevronRight } from 'lucide-react'
 import ChampionSearch from '../components/ChampionSearch'
@@ -62,6 +62,7 @@ export default function Build() {
   const { recommend, build, isLoading, error } = useBuildRecommendation()
 
   const myChampion = champions.find(c => c.id === championId)
+  const hasFetchedGeneric = useRef(false)
 
   // Auto-populate opponent from URL query params
   useEffect(() => {
@@ -72,12 +73,25 @@ export default function Build() {
     }
   }, [champions, searchParams])
 
-  function handleGetBuild() {
-    if (!championId || !role || !laneOpponent) return
+  // Auto-fetch a generic build on mount (champion + role only, no team comp)
+  useEffect(() => {
+    if (!championId || !role || champions.length === 0 || hasFetchedGeneric.current) return
+    hasFetchedGeneric.current = true
     recommend({
       champion: myChampion?.name ?? championId,
       role: role.toUpperCase() as Role,
-      lane_opponent: laneOpponent.name,
+      lane_opponent: '',
+      ally_team: [],
+      enemy_team: [],
+    })
+  }, [championId, role, champions, myChampion, recommend])
+
+  function handleGetBuild() {
+    if (!championId || !role) return
+    recommend({
+      champion: myChampion?.name ?? championId,
+      role: role.toUpperCase() as Role,
+      lane_opponent: laneOpponent?.name ?? '',
       ally_team: allyTeam.map(c => c.name),
       enemy_team: enemyTeam.map(c => c.name),
     })
@@ -184,26 +198,6 @@ export default function Build() {
 
           {/* ── Left: Build output ─────────────────────────────────────────── */}
           <div>
-            {/* Config prompt */}
-            {!build && !isLoading && (
-              <div className="border border-[#2A3147] bg-surface-1 p-8 text-center">
-                <div className="w-12 h-12 border border-gold-dark/30 mx-auto mb-4 flex items-center justify-center">
-                  <span className="font-playfair text-gold text-xl">?</span>
-                </div>
-                <p className="font-playfair text-ink font-semibold text-lg mb-2">
-                  Configure Your Matchup
-                </p>
-                <p className="font-rajdhani text-ink-2 text-sm mb-6">
-                  Select your lane opponent on the right to generate a tailored build recommendation.
-                </p>
-                {!laneOpponent && (
-                  <p className="font-rajdhani text-xs text-gold tracking-wider uppercase">
-                    ← Set lane opponent to continue
-                  </p>
-                )}
-              </div>
-            )}
-
             {/* Loading */}
             {isLoading && (
               <div className="border border-[#2A3147] bg-surface-1 p-12 text-center">
