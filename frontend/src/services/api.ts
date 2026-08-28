@@ -1,22 +1,10 @@
 import axios from 'axios'
-import type { BuildRequest, BuildRecommendation, BuildAnalysisResponse, Champion, SummonerProfile, MatchDetailResponse, LiveGameData } from '../types'
+import type { BuildAnalysisResponse, SummonerProfile, MatchDetailResponse, LiveGameData } from '../types'
 
 const client = axios.create({
   baseURL: '/api/v1',
   timeout: 15000,
 })
-
-export async function fetchChampions(): Promise<{ version: string; champions: Champion[] }> {
-  const { data } = await client.get('/champions/')
-  return data
-}
-
-export async function fetchBuildRecommendation(
-  req: BuildRequest
-): Promise<BuildRecommendation> {
-  const { data } = await client.post('/builds/recommend', req)
-  return data
-}
 
 export async function fetchSummonerProfile(
   platform: string,

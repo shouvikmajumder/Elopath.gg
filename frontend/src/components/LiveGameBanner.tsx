@@ -62,14 +62,6 @@ function ParticipantCard({ participant, isCurrentSummoner, platform }: Participa
             </span>
           )}
         </p>
-        {isCurrentSummoner && (
-          <Link
-            to={`/build?champion=${encodeURIComponent(participant.champion_name)}`}
-            className="font-rajdhani text-[10px] text-gold hover:underline tracking-wide mt-0.5 block"
-          >
-            Get Build →
-          </Link>
-        )}
       </div>
     </div>
   )

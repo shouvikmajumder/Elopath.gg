@@ -37,9 +37,6 @@ function Nav({ breadcrumb }: { breadcrumb: string }) {
           <Link to="/" className="font-rajdhani text-sm font-semibold tracking-wider text-gold transition-colors uppercase">
             Profile
           </Link>
-          <Link to="/champions" className="font-rajdhani text-sm font-semibold tracking-wider text-ink-2 hover:text-gold transition-colors uppercase">
-            Champions
-          </Link>
         </div>
       </div>
     </nav>
