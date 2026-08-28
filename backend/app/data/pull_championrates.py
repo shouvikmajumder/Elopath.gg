@@ -7,7 +7,7 @@ vendored dataset current:
 
     python app/data/pull_championrates.py
 
-Source URL: http://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/championrates.json
+Source URL: https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/championrates.json
 """
 
 import json
@@ -15,7 +15,7 @@ import urllib.request
 from pathlib import Path
 
 MERAKI_URL = (
-    "http://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/championrates.json"
+    "https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/championrates.json"
 )
 ROLES = ("TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY")
 OUT_PATH = Path(__file__).parent / "champion_roles.json"

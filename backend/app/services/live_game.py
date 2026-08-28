@@ -77,14 +77,12 @@ async def get_live_game(platform: str, puuid: str) -> LiveGameResponse:
             or participants[i].spell2_id == SMITE_SPELL_ID
             for i in team_indices
         ]
-        role_map = predict_team_roles(champ_ids, smite_flags)
+        role_list = predict_team_roles(champ_ids, smite_flags)
         for local_pos, global_idx in enumerate(team_indices):
-            champ_id = participants[global_idx].champion_id
-            if role_map:
-                # Full 5-man prediction: look up by champion ID at this
-                # position.  Duplicate champion IDs on the same team both
-                # resolve to the same map value, which is acceptable.
-                position: str | None = role_map.get(champ_id)
+            if role_list:
+                # Full 5-man prediction: index positionally so duplicate
+                # champion IDs on the same team each get their own role.
+                position: str | None = role_list[local_pos]
             else:
                 # Non-standard lobby (ARAM, custom, <5 participants): fall
                 # back to Smite-only detection so junglers are still labelled.

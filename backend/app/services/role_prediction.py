@@ -38,9 +38,11 @@ ROLES = ("TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY")
 _EPSILON: float = 1e-6
 
 # Log-space bonus added to a champion's JUNGLE pairing when that champion
-# carries Smite.  Equivalent to multiplying the raw playrate by e^10 ≈ 22026,
-# which is large enough to dominate any other role assignment.
-_SMITE_JUNGLE_BONUS: float = 10.0
+# carries Smite.  Equivalent to multiplying the raw playrate by e^20 ≈ 5e8,
+# which guarantees JUNGLE even for a high-playrate BOT carry (e.g. Caitlyn,
+# playrate ~8.955 → log-score 2.19).  The minimum required bonus is ~16 given
+# current data; 20.0 provides headroom for future patches.
+_SMITE_JUNGLE_BONUS: float = 20.0
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -50,8 +52,8 @@ _SMITE_JUNGLE_BONUS: float = 10.0
 def predict_team_roles(
     champion_ids: list[int],
     smite_flags: list[bool],
-) -> dict[int, str]:
-    """Return a mapping of champion_id -> assigned role for a single team.
+) -> list[str]:
+    """Return a positional list of assigned roles for a single team.
 
     Parameters
     ----------
@@ -59,26 +61,40 @@ def predict_team_roles(
         The five champion IDs for this team, in participant order.
     smite_flags:
         Parallel list of booleans; True means this participant has Smite.
+        Must be the same length as ``champion_ids``.
 
     Returns
     -------
-    dict[int, str]
-        Keys are the input champion IDs; values are one of
-        TOP / JUNGLE / MIDDLE / BOTTOM / UTILITY.
+    list[str]
+        A list of the same length as ``champion_ids`` where each element is
+        one of TOP / JUNGLE / MIDDLE / BOTTOM / UTILITY, in the same
+        positional order as the input list.  Returns ``[]`` when
+        ``champion_ids`` does not have exactly 5 entries.
+
+    Raises
+    ------
+    ValueError
+        If ``smite_flags`` is not the same length as ``champion_ids``.
 
     Notes
     -----
     - If ``champion_ids`` does not have exactly 5 entries the function
-      returns ``{}`` (caller treats missing entries as position=None).
-    - When two participants share the same champion ID the assignment is
-      done positionally (indices), then keyed back to champion IDs.  The
-      last index wins if there are true duplicates, which is fine for
-      display purposes.
+      returns ``[]`` (caller treats missing entries as position=None).
+    - Using a positional list instead of a dict-by-champion-ID means
+      duplicate champion IDs on the same team are each assigned their own
+      role independently, preventing the second participant from clobbering
+      the first.
     - Smite carriers get a large log-space bonus towards JUNGLE so that
       role is virtually guaranteed regardless of playrate.
     """
     if len(champion_ids) != 5:
-        return {}
+        return []
+
+    if len(smite_flags) != len(champion_ids):
+        raise ValueError(
+            f"smite_flags length ({len(smite_flags)}) must match "
+            f"champion_ids length ({len(champion_ids)})"
+        )
 
     n = len(champion_ids)
 
@@ -102,5 +118,7 @@ def predict_team_roles(
             best_score = total
             best_perm = role_perm
 
-    # Map positionally first (handles duplicate champ IDs on one team).
-    return {champion_ids[i]: best_perm[i] for i in range(n)}
+    # Return positionally (same order as champion_ids).  Using a list instead
+    # of a dict-by-champion-ID correctly handles duplicate champ IDs on one
+    # team — each participant index gets its own assigned role.
+    return list(best_perm)
