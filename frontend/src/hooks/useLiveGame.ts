@@ -17,7 +17,13 @@ export function useLiveGame(platform: string | null, puuid: string | null) {
       }
     },
     enabled: !!platform && !!puuid,
-    refetchInterval: 30_000,
+    // Poll every 30s while things are healthy, but stop hammering a forbidden
+    // endpoint: a 403 (key lacks Spectator scope) will never resolve on retry.
+    refetchInterval: (query) => {
+      const err = query.state.error
+      if (isAxiosError(err) && err.response?.status === 403) return false
+      return 30_000
+    },
     retry: false,
   })
 }

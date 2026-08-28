@@ -57,9 +57,17 @@ export default function Summoner() {
   const {
     data: liveGame,
     isError: liveGameError,
+    error: liveGameErrorObj,
     isFetching: liveGameFetching,
     refetch: refetchLiveGame,
   } = useLiveGame(platform ?? null, profile?.summoner.puuid ?? null)
+
+  const liveGameErrorStatus = isAxiosError(liveGameErrorObj)
+    ? liveGameErrorObj.response?.status
+    : undefined
+  // A 403 means the Riot key lacks Spectator scope — a permanent config issue,
+  // not a transient failure, so we tell the user plainly and hide Retry.
+  const liveGamePermissionError = liveGameErrorStatus === 403
 
   const [activeTab, setActiveTab] = useState<Tab>('overview')
 
@@ -257,17 +265,27 @@ export default function Summoner() {
                   <div className="border border-loss/30 bg-surface-1 p-6 animate-fade-up">
                     <div className="flex items-center gap-3 mb-3">
                       <AlertTriangle className="text-loss flex-shrink-0" size={16} />
-                      <p className="font-rajdhani text-sm font-semibold text-ink">Unable to load live game data</p>
+                      <p className="font-rajdhani text-sm font-semibold text-ink">
+                        {liveGamePermissionError
+                          ? 'Live game data unavailable'
+                          : 'Unable to load live game data'}
+                      </p>
                     </div>
                     <p className="font-rajdhani text-ink-2 text-xs mb-4">
-                      The API may be rate limited or the game may have just ended.
+                      {liveGamePermissionError
+                        ? "This deployment's Riot API key doesn't have Spectator access, so live games can't be loaded."
+                        : liveGameErrorStatus === 429
+                          ? 'The Riot API is rate limited — please try again shortly.'
+                          : 'The service is temporarily unavailable or the game may have just ended.'}
                     </p>
-                    <button
-                      onClick={() => void refetchLiveGame()}
-                      className="font-rajdhani text-xs font-semibold tracking-wider uppercase text-ink-3 hover:text-gold border border-[#2A3147] hover:border-gold/40 px-4 py-2 transition-colors"
-                    >
-                      Retry
-                    </button>
+                    {!liveGamePermissionError && (
+                      <button
+                        onClick={() => void refetchLiveGame()}
+                        className="font-rajdhani text-xs font-semibold tracking-wider uppercase text-ink-3 hover:text-gold border border-[#2A3147] hover:border-gold/40 px-4 py-2 transition-colors"
+                      >
+                        Retry
+                      </button>
+                    )}
                   </div>
                 )}
 
