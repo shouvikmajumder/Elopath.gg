@@ -138,6 +138,24 @@ def test_live_game_rate_limited_returns_429(client):
 
 
 # ---------------------------------------------------------------------------
+# Test 3b — 403 from Riot API (key lacks Spectator scope) → 403 with a clear,
+# honest detail (not the misleading "invalid or expired" / 502 of before).
+# ---------------------------------------------------------------------------
+
+def test_live_game_forbidden_returns_403_spectator_detail(client):
+    """RiotAPIError(403) → HTTP 403 telling the user the key lacks Spectator access."""
+    with patch(
+        "app.api.routes.live_game.get_live_game",
+        new_callable=AsyncMock,
+        side_effect=RiotAPIError(403, "forbidden"),
+    ):
+        resp = client.get("/api/v1/live-game/na1/some-puuid")
+
+    assert resp.status_code == 403
+    assert resp.json()["detail"] == "Spectator API not enabled for this Riot API key"
+
+
+# ---------------------------------------------------------------------------
 # Test 4 — Invalid platform → 400 without touching the service
 # ---------------------------------------------------------------------------
 

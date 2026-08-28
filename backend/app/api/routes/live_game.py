@@ -23,7 +23,12 @@ async def get_live_game_route(platform: str, puuid: str):
         if e.status_code == 429:
             raise HTTPException(status_code=429, detail="Rate limit exceeded")
         if e.status_code == 403:
-            raise HTTPException(status_code=502, detail="Riot API key invalid or expired")
+            # The key is valid for other endpoints but forbidden here — this
+            # means it lacks Spectator-API scope, not that it is expired.
+            raise HTTPException(
+                status_code=403,
+                detail="Spectator API not enabled for this Riot API key",
+            )
         raise HTTPException(status_code=502, detail="Riot API error")
     except (httpx.HTTPStatusError, httpx.TransportError):
         raise HTTPException(status_code=502, detail="Data Dragon unavailable")
