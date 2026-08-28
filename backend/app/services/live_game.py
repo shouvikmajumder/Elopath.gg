@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from app.services import data_dragon as dd
 from app.services.riot_api import RiotAPIClient
+from app.services.role_prediction import predict_team_roles
 
 SMITE_SPELL_ID = 11
 
@@ -36,6 +37,7 @@ async def get_live_game(platform: str, puuid: str) -> LiveGameResponse:
         int(v["key"]): k for k, v in champions_data.items()
     }
 
+    # --- Phase 1: build participants without positions ---
     participants: list[LiveGameParticipant] = []
     for p in raw.get("participants", []):
         champion_id: int = p.get("championId", 0)
@@ -45,7 +47,6 @@ async def get_live_game(platform: str, puuid: str) -> LiveGameResponse:
 
         spell1_id: int = p.get("spell1Id", 0)
         spell2_id: int = p.get("spell2Id", 0)
-        position = "JUNGLE" if spell1_id == SMITE_SPELL_ID or spell2_id == SMITE_SPELL_ID else None
 
         summoner_name: str = p.get("riotId") or p.get("summonerName") or ""
 
@@ -57,11 +58,40 @@ async def get_live_game(platform: str, puuid: str) -> LiveGameResponse:
                 champion_id=champion_id,
                 champion_name=champion_name,
                 champion_icon_url=icon_url,
-                position=position,
+                position=None,
                 spell1_id=spell1_id,
                 spell2_id=spell2_id,
             )
         )
+
+    # --- Phase 2: predict roles per team and backfill positions ---
+    # Group participant indices by team_id (typically 100 / 200).
+    teams: dict[int, list[int]] = {}
+    for idx, participant in enumerate(participants):
+        teams.setdefault(participant.team_id, []).append(idx)
+
+    for team_indices in teams.values():
+        champ_ids = [participants[i].champion_id for i in team_indices]
+        smite_flags = [
+            participants[i].spell1_id == SMITE_SPELL_ID
+            or participants[i].spell2_id == SMITE_SPELL_ID
+            for i in team_indices
+        ]
+        role_map = predict_team_roles(champ_ids, smite_flags)
+        for local_pos, global_idx in enumerate(team_indices):
+            champ_id = participants[global_idx].champion_id
+            if role_map:
+                # Full 5-man prediction: look up by champion ID at this
+                # position.  Duplicate champion IDs on the same team both
+                # resolve to the same map value, which is acceptable.
+                position: str | None = role_map.get(champ_id)
+            else:
+                # Non-standard lobby (ARAM, custom, <5 participants): fall
+                # back to Smite-only detection so junglers are still labelled.
+                position = "JUNGLE" if smite_flags[local_pos] else None
+            participants[global_idx] = participants[global_idx].model_copy(
+                update={"position": position}
+            )
 
     return LiveGameResponse(
         game_id=raw.get("gameId", 0),
