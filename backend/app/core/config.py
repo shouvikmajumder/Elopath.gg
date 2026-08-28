@@ -20,7 +20,6 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     RIOT_API_KEY: str = "RGAPI-placeholder"
-    ANTHROPIC_API_KEY: str = ""
     RIOT_REGION: str = "na1"
     CORS_ORIGINS: list[str] = [
         "http://localhost:5173",
