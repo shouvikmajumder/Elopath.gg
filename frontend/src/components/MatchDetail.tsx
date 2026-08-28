@@ -1,14 +1,9 @@
-import { useState } from 'react'
-import { Sparkles, Loader2 } from 'lucide-react'
-import type { MatchDetailResponse, MatchParticipant, ItemSlot, BuildAnalysisResponse } from '../types'
+import type { MatchDetailResponse, MatchParticipant, ItemSlot } from '../types'
 import { roleDisplay } from '../utils/format'
-import { fetchBuildAnalysis } from '../services/api'
-import BuildAnalysisPanel from './BuildAnalysisPanel'
 
 interface MatchDetailProps {
   data: MatchDetailResponse
   currentPuuid: string
-  platform: string
 }
 
 interface TeamColumnProps {
@@ -131,30 +126,7 @@ function TeamColumn({ participants, side, currentPuuid }: TeamColumnProps) {
   )
 }
 
-export default function MatchDetail({ data, currentPuuid, platform }: MatchDetailProps) {
-  const [showAnalysis, setShowAnalysis] = useState(false)
-  const [analysis, setAnalysis] = useState<BuildAnalysisResponse | null>(null)
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [analysisError, setAnalysisError] = useState<string | null>(null)
-
-  async function handleAnalyze() {
-    if (analysis) {
-      setShowAnalysis(prev => !prev)
-      return
-    }
-    setShowAnalysis(true)
-    setIsAnalyzing(true)
-    setAnalysisError(null)
-    try {
-      const result = await fetchBuildAnalysis(platform, data.match_id, currentPuuid)
-      setAnalysis(result)
-    } catch {
-      setAnalysisError('Build analysis failed. Please try again.')
-    } finally {
-      setIsAnalyzing(false)
-    }
-  }
-
+export default function MatchDetail({ data, currentPuuid }: MatchDetailProps) {
   return (
     <div className="border-b border-x border-[#2A3147] bg-surface">
       {/* Two-column layout: side by side on sm+, stacked on mobile */}
@@ -170,35 +142,6 @@ export default function MatchDetail({ data, currentPuuid, platform }: MatchDetai
           currentPuuid={currentPuuid}
         />
       </div>
-
-      {/* Analyze build footer */}
-      <div className="border-t border-[#2A3147] px-4 py-2 flex items-center justify-between">
-        <button
-          onClick={handleAnalyze}
-          disabled={isAnalyzing}
-          className="flex items-center gap-1.5 font-rajdhani text-xs font-semibold text-gold border border-gold/40 px-3 py-1 hover:bg-gold/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Sparkles size={12} />
-          {isAnalyzing ? 'Analyzing...' : showAnalysis && analysis ? 'Hide Analysis' : 'Analyze My Build'}
-        </button>
-      </div>
-
-      {showAnalysis && (
-        <div>
-          {isAnalyzing && (
-            <div className="border-t border-[#2A3147] bg-surface flex items-center justify-center py-6 gap-2">
-              <Loader2 className="w-4 h-4 text-gold animate-spin" />
-              <span className="font-rajdhani text-xs text-ink-3">Claude is analyzing your build...</span>
-            </div>
-          )}
-          {analysisError && !isAnalyzing && (
-            <div className="border-t border-[#2A3147] px-4 py-3">
-              <p className="font-rajdhani text-xs text-loss">{analysisError}</p>
-            </div>
-          )}
-          {analysis && !isAnalyzing && <BuildAnalysisPanel data={analysis} />}
-        </div>
-      )}
     </div>
   )
 }

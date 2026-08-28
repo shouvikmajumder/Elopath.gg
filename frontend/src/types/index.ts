@@ -87,20 +87,6 @@ export interface MatchDetailResponse {
   red_team: MatchParticipant[]
 }
 
-export interface AnalyzedItem {
-  name: string
-  reasoning: string
-  icon: string
-}
-
-export interface BuildAnalysisResponse {
-  champion: string
-  role: string
-  items: AnalyzedItem[]
-  boots: AnalyzedItem
-  comp_summary: string
-}
-
 export interface LiveGameParticipant {
   puuid: string
   summoner_name: string

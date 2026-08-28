@@ -156,7 +156,6 @@ export default function MatchRow({ match, platform, currentPuuid }: MatchRowProp
             <MatchDetail
               data={detail}
               currentPuuid={currentPuuid}
-              platform={platform}
             />
           )}
         </div>
