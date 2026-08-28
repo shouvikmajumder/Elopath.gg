@@ -2,6 +2,38 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { LiveGameData, LiveGameParticipant } from '../types'
 
+type KnownPosition = 'TOP' | 'JUNGLE' | 'MIDDLE' | 'BOTTOM' | 'UTILITY'
+
+const ROLE_LABEL: Record<KnownPosition, string> = {
+  TOP: 'TOP',
+  JUNGLE: 'JG',
+  MIDDLE: 'MID',
+  BOTTOM: 'BOT',
+  UTILITY: 'SUP',
+}
+
+const ROLE_ORDER: Record<KnownPosition, number> = {
+  TOP: 0,
+  JUNGLE: 1,
+  MIDDLE: 2,
+  BOTTOM: 3,
+  UTILITY: 4,
+}
+
+function getRoleLabel(position: string | null): string | null {
+  if (position === null) return null
+  return ROLE_LABEL[position as KnownPosition] ?? null
+}
+
+function getRoleOrder(position: string | null): number {
+  if (position === null) return 99
+  return ROLE_ORDER[position as KnownPosition] ?? 99
+}
+
+function sortByLane(participants: LiveGameParticipant[]): LiveGameParticipant[] {
+  return [...participants].sort((a, b) => getRoleOrder(a.position) - getRoleOrder(b.position))
+}
+
 interface LiveGameBannerProps {
   liveGame: LiveGameData
   summonerPuuid: string
@@ -56,9 +88,9 @@ function ParticipantCard({ participant, isCurrentSummoner, platform }: Participa
         )}
         <p className="font-rajdhani text-[10px] text-ink-3 truncate">
           {participant.champion_name}
-          {participant.position === 'JUNGLE' && (
+          {getRoleLabel(participant.position) !== null && (
             <span className="inline-block ml-1 px-1 py-0.5 bg-[#2A3147] font-rajdhani text-[9px] text-ink-3 uppercase tracking-wider leading-none rounded-sm">
-              JG
+              {getRoleLabel(participant.position)}
             </span>
           )}
         </p>
@@ -111,8 +143,8 @@ export default function LiveGameBanner({ liveGame, summonerPuuid, platform }: Li
     return () => clearInterval(id)
   }, [liveGame.game_start_time, gameStarted])
 
-  const blueTeam = liveGame.participants.filter(p => p.team_id === 100)
-  const redTeam = liveGame.participants.filter(p => p.team_id === 200)
+  const blueTeam = sortByLane(liveGame.participants.filter(p => p.team_id === 100))
+  const redTeam = sortByLane(liveGame.participants.filter(p => p.team_id === 200))
 
   return (
     <div className="border border-[#2A3147] bg-surface-1 animate-fade-up">
