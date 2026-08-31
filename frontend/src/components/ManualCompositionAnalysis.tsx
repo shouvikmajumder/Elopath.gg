@@ -204,6 +204,7 @@ export default function ManualCompositionAnalysis({ profile, platform }: ManualC
                 onChange={(role, champion) => updateChampion(setAllyTeam, role, champion)}
                 targetRole={targetRole}
                 onTargetRoleChange={setTargetRole}
+                playerName={profile.summoner.game_name}
               />
               <TeamEntry
                 label="Opposing team"
@@ -285,9 +286,10 @@ interface TeamEntryProps {
   onChange: (role: Role, champion: string) => void
   targetRole?: Role
   onTargetRoleChange?: (role: Role) => void
+  playerName?: string
 }
 
-function TeamEntry({ label, labelClass, team, onChange, targetRole, onTargetRoleChange }: TeamEntryProps) {
+function TeamEntry({ label, labelClass, team, onChange, targetRole, onTargetRoleChange, playerName }: TeamEntryProps) {
   return (
     <div>
       <p className={`font-playfair font-bold text-xs tracking-[0.18em] uppercase border-b pb-2 mb-2 ${labelClass}`}>{label}</p>
@@ -303,15 +305,18 @@ function TeamEntry({ label, labelClass, team, onChange, targetRole, onTargetRole
               className="min-w-0 flex-1 bg-transparent font-rajdhani text-sm text-ink outline-none placeholder:text-ink-3"
               aria-label={`${label} ${slot.role} champion`}
             />
-            {targetRole === slot.role && <span className="font-rajdhani text-[10px] uppercase tracking-wider text-gold">Target</span>}
-            {onTargetRoleChange && targetRole !== slot.role && (
-              <button
-                type="button"
-                onClick={() => onTargetRoleChange(slot.role)}
-                className="font-rajdhani text-[10px] uppercase tracking-wider text-ink-3 hover:text-gold"
-              >
-                Set target
-              </button>
+            {onTargetRoleChange && (
+              <label className={`flex items-center gap-1.5 font-rajdhani text-[10px] uppercase tracking-wider cursor-pointer ${targetRole === slot.role ? 'text-gold' : 'text-ink-3 hover:text-gold'}`}>
+                <input
+                  type="radio"
+                  name="searched-player-role"
+                  checked={targetRole === slot.role}
+                  onChange={() => onTargetRoleChange(slot.role)}
+                  className="accent-[#C89B3C]"
+                  aria-label={`${playerName ?? 'Searched player'} is playing ${slot.role}`}
+                />
+                Playing
+              </label>
             )}
           </label>
         ))}
