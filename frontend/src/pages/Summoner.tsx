@@ -7,11 +7,12 @@ import RankedBadge from '../components/RankedBadge'
 import MatchRow from '../components/MatchRow'
 import ChampionStatCard from '../components/ChampionStatCard'
 import LiveGameBanner from '../components/LiveGameBanner'
+import ManualCompositionAnalysis from '../components/ManualCompositionAnalysis'
 import { useSummonerProfile } from '../hooks/useSummonerProfile'
 import { useLiveGame } from '../hooks/useLiveGame'
 import { regionLabel } from '../constants/regions'
 
-type Tab = 'overview' | 'live'
+type Tab = 'overview' | 'live' | 'manual'
 
 function Nav({ breadcrumb }: { breadcrumb: string }) {
   return (
@@ -188,6 +189,16 @@ export default function Summoner() {
                 )}
                 Live
               </button>
+              <button
+                onClick={() => setActiveTab('manual')}
+                className={`px-4 py-2.5 font-rajdhani text-sm font-semibold tracking-wider uppercase transition-colors ${
+                  activeTab === 'manual'
+                    ? 'text-gold border-b-2 border-gold -mb-px'
+                    : 'text-ink-3 hover:text-ink'
+                }`}
+              >
+                Manual matchup
+              </button>
             </div>
 
             {/* Overview tab */}
@@ -300,6 +311,10 @@ export default function Summoner() {
                   </div>
                 )}
               </>
+            )}
+
+            {activeTab === 'manual' && (
+              <ManualCompositionAnalysis profile={profile} platform={platform ?? ''} />
             )}
           </div>
         )}

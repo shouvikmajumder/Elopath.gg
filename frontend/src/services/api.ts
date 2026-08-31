@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { SummonerProfile, MatchDetailResponse, LiveGameData } from '../types'
+import type { Champion, SummonerProfile, MatchDetailResponse, LiveGameData } from '../types'
 
 const client = axios.create({
   baseURL: '/api/v1',
@@ -33,3 +33,7 @@ export async function getLiveGame(
   return data
 }
 
+export async function fetchChampions(): Promise<Champion[]> {
+  const { data } = await client.get<{ champions: Champion[] }>('/champions/')
+  return data.champions
+}
